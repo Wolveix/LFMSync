@@ -1,0 +1,137 @@
+#!/bin/bash
+HEADER_TEXT="\\e[93m=== LFMSync v0.0.1 - https://github.com/Wolveix/LFMSync ===\\e[0m\\n"
+CONFIG_PATH="$HOME/.config/lfmsync"
+set -e
+
+if [ -z "$python3_binary" ]; then
+  python3_binary=$(command -v python3)
+else
+  if [ ! -f "$python3_binary" ]; then
+    python3_binary=""
+  fi
+fi
+
+function func_about {
+    printf "\\nLFMSync is a fork of lastscrape-gui. I don't use Python at all\\nin my own projects, but I wanted to backup my Last.FM scrobbles to\\nLibreFM and the tool that this is forked from wasn't working for me.\\nI diagnosed the problems and fixed them where possible. This tool\\nhas worked for me, but I can't guarantee the same for you.\\n\\n- Robert Thomas\\n  Managing Director & Lead Software Developer at Arcruy.\\n  https://github.com/Wolveix/LFMSync\\n"
+}
+
+function func_export {
+    if [ -z "$username" ]; then
+      printf "No username was specified. Provide via the -u flag.\\n"
+      exit 0
+    fi
+
+    if [ -z "$filename" ]; then
+      filename="lfmexport"
+    fi
+
+    if [ -n "$python3_binary" ]; then
+      cd "$CONFIG_PATH"
+      "$python3_binary" export.py -u "$username" -o "$filename".txt
+    else
+      printf "Python3 could not be found.\\nPlease run 'LFMSync install'.\\n"
+    fi
+}
+
+function func_sync {
+    if [ -z "$username" ]; then
+      printf "No username was specified. Provide one via the -u flag.\\n"
+      exit 0
+    fi
+
+    if [ -z "$filename" ]; then
+      if [ ! -f "$filaname" ]; then
+        printf "The file provided does not exist.\\n"
+        exit 0
+      fi
+    else
+      printf "No file was specified. Provide it via the -o flag.\\n"
+      exit 0
+    fi
+
+    if [ -n "$python3_binary" ]; then
+      cd "$CONFIG_PATH"
+      "$python3_binary" sync.py "$username" "$filename"
+    else
+      printf "Python3 could not be found.\\n"
+    fi
+}
+
+function func_help {
+    printf "\\n\\e[37mUsage:\\n  LFMSync [flags]\\n  LFMSync [command]\\n\\nAvailable Commands:\\n  about           Learn more about the program\\n  export          Export Last.FM scrobbles to a .txt file\\n  sync            Sync scrobbles from dumped Last.FM txt file\\n"
+}
+
+if [ -z "$1" ]; then
+  printf "$HEADER_TEXT"
+  func_help
+  exit 0
+fi
+command=$1
+subcommand=$2
+shift
+printf "$HEADER_TEXT"
+case "$command" in
+  about)
+    func_about
+    ;;
+  export)
+    while getopts ":o:u:" opt; do
+      case $opt in
+        o)
+          filename=${OPTARG,,}
+          ;;
+        u)
+          username=${OPTARG,,}
+          ;;
+        \?)
+          echo "Invalid option: -$OPTARG." >&2
+          exit 1
+          ;;
+        :)
+          echo "Option -$OPTARG requires an argument." >&2
+          exit 1
+          ;;
+      esac
+    done
+    if [ $OPTIND -eq 1 ]; then
+      printf "\\n\\e[39mUsage:\\n  LFMSync export -u YourUsername -o OutputFile"
+      exit 0
+    fi
+    shift $((OPTIND -1))
+    ;;
+  sync)
+    while getopts ":o:u:" opt; do
+      case $opt in
+        o)
+          filename=${OPTARG,,}
+          ;;
+        u)
+          username=${OPTARG,,}
+          ;;
+        \?)
+          echo "Invalid option: -$OPTARG." >&2
+          exit 1
+          ;;
+        :)
+          echo "Option -$OPTARG requires an argument." >&2
+          exit 1
+          ;;
+      esac
+    done
+    if [ $OPTIND -eq 1 ]; then
+      printf "\\n\\e[39mUsage:\\n  LFMSync sync -u YourUsername -o OutputFile"
+      exit 0
+    fi
+    shift $((OPTIND -1))
+    ;;
+  help)
+    func_help
+    ;;
+  *)
+    printf "This is not a valid command.\\nSee 'LFMSync help' for more information.\\n"
+    exit 0
+    ;;
+esac
+### COMMAND HANDLER ###
+
+main "$@"

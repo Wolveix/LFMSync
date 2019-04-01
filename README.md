@@ -5,7 +5,7 @@ A CLI tool for getting scrobbles from Last.FM and syncing them elsewhere.
 Install any missing dependencies (Debian/Ubuntu):
 ``` shell
 sudo apt-get -qq -y update && sudo apt-get -qq -y upgrade
-sudo apt-get -qq -y install python3 python3-pip unzip
+sudo apt-get -qq -y install python3 unzip
 wget https://github.com/Wolveix/LFMSync/archive/master.zip && unzip master.zip && cd LFMSync-master
 ```
 
