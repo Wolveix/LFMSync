@@ -16,8 +16,12 @@ esac
 configpath="$HOME/.config/lfmsync"
 mkdir -p "$configpath" /tmp/lfmsync
 cd /tmp/lfmsync || exit
-curl -O https://github.com/Wolveix/LFMSync/archive/master.zip 2>/dev/null
+wget https://github.com/Wolveix/LFMSync/archive/master.zip 2>/dev/null
 unzip master.zip
+if [ ! -d LFMSync-master ]; then
+  printf "\\nAn unexpected error occurred.\\n\\e[0m"
+  exit 0
+fi
 cd LFMSync-master
 mv config/export.py "$configpath/export.py"
 mv config/scrobble.py "$configpath/scrobble.py"

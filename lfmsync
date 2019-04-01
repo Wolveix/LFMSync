@@ -11,6 +11,10 @@ else
   fi
 fi
 
+function main() {
+    VERBOSE=6
+}
+
 function func_about {
     printf "\\nLFMSync is a fork of lastscrape-gui. I don't use Python at all\\nin my own projects, but I wanted to backup my Last.FM scrobbles to\\nLibreFM and the tool that this is forked from wasn't working for me.\\nI diagnosed the problems and fixed them where possible. This tool\\nhas worked for me, but I can't guarantee the same for you.\\n\\n- Robert Thomas\\n  Managing Director & Lead Software Developer at Arcruy.\\n  https://github.com/Wolveix/LFMSync\\n"
 }
@@ -22,12 +26,12 @@ function func_export {
     fi
 
     if [ -z "$filename" ]; then
-      filename="lfmexport"
+      filename="$HOME/LFMSync Export [$username]".txt
     fi
 
     if [ -n "$python3_binary" ]; then
       cd "$CONFIG_PATH"
-      "$python3_binary" export.py -u "$username" -o "$filename".txt
+      "$python3_binary" export.py -u "$username" -o "$filename"
     else
       printf "Python3 could not be found.\\nPlease run 'LFMSync install'.\\n"
     fi
@@ -94,9 +98,10 @@ case "$command" in
       esac
     done
     if [ $OPTIND -eq 1 ]; then
-      printf "\\n\\e[39mUsage:\\n  LFMSync export -u YourUsername -o OutputFile"
+      printf "\\n\\e[39mUsage:\\n  LFMSync export -u YourUsername -o OutputFile\\n"
       exit 0
     fi
+    func_export
     shift $((OPTIND -1))
     ;;
   sync)
@@ -119,9 +124,10 @@ case "$command" in
       esac
     done
     if [ $OPTIND -eq 1 ]; then
-      printf "\\n\\e[39mUsage:\\n  LFMSync sync -u YourUsername -o OutputFile"
+      printf "\\n\\e[39mUsage:\\n  LFMSync sync -u YourUsername -o OutputFile\\n"
       exit 0
     fi
+    func_sync
     shift $((OPTIND -1))
     ;;
   help)
