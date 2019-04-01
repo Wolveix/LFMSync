@@ -44,7 +44,7 @@ if __name__ == '__main__':
     scrobbler = ScrobbleServer(server, username, password)
 
     n = 0
-    for line in file(data):
+    for line in open(data):
         n = n + 1
         timestamp, track, artist, album, trackmbid, artistmbid, albummbid = line.strip("\n").split("\t")
         #submission protocol doesnt specify artist/album mbid, so we dont send them
