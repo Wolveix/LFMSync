@@ -23,7 +23,7 @@ sudo apt-get -qq -y install curl python3 unzip
 
 Then run:
 ``` shell
-mkdir /tmp/lfmsync "$HOME/.config/lfmsync"
+mkdir -p /tmp/lfmsync "$HOME/.config/lfmsync"
 cd /tmp/fmsync
 wget https://github.com/Wolveix/LFMSync/archive/master.zip 2>/dev/null
 unzip master.zip
