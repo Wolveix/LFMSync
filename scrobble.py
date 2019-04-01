@@ -60,9 +60,10 @@ class ScrobbleServer(object):
             i += 1
         data += [('s', self.session_id)]
         last_error = None
+        data = urlencode(data)
         for timeout in (10, 20, 40, 60, 90, 120):
             try:
-                response = urlopen(self.submit_url, urlencode(data)).read()
+                response = urlopen(self.submit_url, data.encode('utf-8')).read()
                 response = response.strip()
             except (URLError, HTTPError) as e:
                 last_error = str(e)
@@ -73,7 +74,7 @@ class ScrobbleServer(object):
                               print('Scrobbling error: {last_error}, will retry in timeouts')
 
             else:
-                if response == 'OK':
+                if response == b'OK':
                     break
                 else:
                     try:
